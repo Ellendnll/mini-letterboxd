@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow p-4">
+
+                <h2 class="mb-4 text-center">
+                    Editar Perfil
+                </h2>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+
+                        <label>Usuário</label>
+
+                        {{ form.username }}
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Email</label>
+
+                        {{ form.email }}
+
+                    </div>
+
+                    <button class="btn btn-dark w-100">
+                        Salvar Alterações
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
