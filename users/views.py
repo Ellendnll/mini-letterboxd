@@ -6,6 +6,8 @@ from django.contrib import messages
 
 from .forms import RegisterForm, UpdateUserForm
 
+from django.contrib.auth import authenticate, login, logout
+
 
 def home_view(request):
 
@@ -85,3 +87,56 @@ def edit_profile_view(request):
             'form': form
         }
     )
+
+def login_view(request):
+
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+
+            login(request, user)
+
+            messages.success(
+                 request,
+                 'Login realizado com sucesso!'
+            )
+
+            remember_me = request.POST.get('remember_me')
+
+            if not remember_me:
+                request.session.set_expiry(0)
+
+            return redirect('profile')
+
+        else:
+
+            messages.error(
+                request,
+                'Usuário ou senha inválidos.'
+            )
+
+    return render(
+        request,
+        'users/login.html'
+    )
+
+@login_required
+def logout_view(request):
+
+    logout(request)
+
+    messages.success(
+        request,
+        'Logout realizado com sucesso!'
+    )
+
+    return redirect('login')

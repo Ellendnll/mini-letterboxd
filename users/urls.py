@@ -9,24 +9,30 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
 
     path(
-        'login/',
-        auth_views.LoginView.as_view(
-            template_name='users/login.html'
-        ),
-        name='login'
+     'login/',
+     views.login_view,
+     name='login'
     ),
 
     path(
         'logout/',
-        auth_views.LogoutView.as_view(),
+        views.logout_view,
         name='logout'
     ),
 
     path('profile/', views.profile_view, name='profile'),
 
     path(
-    'edit-profile/',
-    views.edit_profile_view,
-    name='edit_profile'
-),
+     'edit-profile/',
+     views.edit_profile_view,
+     name='edit_profile'
+    ),
+
+    path(
+        'change-password/',
+        auth_views.PasswordChangeView.as_view(
+             template_name='users/change_password.html'
+        ),
+         name='change_password'
+    ),
 ]
