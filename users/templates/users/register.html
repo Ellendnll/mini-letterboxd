@@ -18,7 +18,25 @@
 
                     {% csrf_token %}
 
-                    {{ form.as_p }}
+                    <div class="mb-3">
+                        <label>Usuário</label>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Senha</label>
+                        {{ form.password1 }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Confirmar senha</label>
+                        {{ form.password2 }}
+                    </div>
 
                     <button class="btn btn-dark w-100">
                         Cadastrar

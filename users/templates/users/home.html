@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5 text-center">
+
+    <h1 class="display-4">
+        LetterBit
+    </h1>
+
+    <p class="lead mt-3">
+        Organize, avalie e favorite seus filmes favoritos.
+    </p>
+
+    {% if not user.is_authenticated %}
+
+        <div class="mt-4">
+
+            <a href="{% url 'register' %}" class="btn btn-dark btn-lg me-2">
+                Criar Conta
+            </a>
+
+            <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg">
+                Login
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

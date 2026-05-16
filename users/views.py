@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
 from .forms import RegisterForm
 
 
@@ -11,6 +11,11 @@ def register_view(request):
 
         if form.is_valid():
             form.save()
+            
+            messages.success(
+              request,
+             'Conta criada com sucesso!'
+)
             return redirect('login')
 
     else:
@@ -25,3 +30,7 @@ def register_view(request):
 def profile_view(request):
 
     return render(request, 'users/profile.html')
+
+def home_view(request):
+
+    return render(request, 'users/home.html')
