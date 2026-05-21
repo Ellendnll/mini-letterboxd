@@ -1,10 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-
-class RegisterForm(UserCreationForm):
+class RegisterForm(forms.ModelForm):
 
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
@@ -20,14 +18,16 @@ class RegisterForm(UserCreationForm):
         })
     )
 
-    password1 = forms.CharField(
+    password = forms.CharField(
+        label="Senha",
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Digite sua senha'
         })
     )
 
-    password2 = forms.CharField(
+    password_confirm = forms.CharField(
+        label="Confirmar senha",
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Confirme sua senha'
@@ -36,46 +36,43 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password']
 
     def clean_email(self):
-
         email = self.cleaned_data.get('email')
-
-        invalid_domains = [
-            'gamil.com',
-            'gmial.com',
-            'hotmial.com',
-            'yaho.com'
-        ]
-
+        invalid_domains = ['gamil.com', 'gmial.com', 'hotmial.com', 'yaho.com']
         domain = email.split('@')[-1]
 
         if domain in invalid_domains:
-
-            raise ValidationError(
-                'Digite um email válido.'
-            )
+            raise ValidationError('Digite um email válido.')
 
         if User.objects.filter(email=email).exists():
-
-            raise ValidationError(
-                'Este email já está cadastrado.'
-            )
+            raise ValidationError('Este email já está cadastrado.')
 
         return email
     
     def clean_username(self):
-
         username = self.cleaned_data.get('username')
-
         if len(username) < 3:
-
-             raise ValidationError(
-                'O nome de usuário deve ter pelo menos 3 caracteres.'
-            )
-
+             raise ValidationError('O nome de usuário deve ter pelo menos 3 caracteres.')
         return username
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password and password_confirm and password != password_confirm:
+            self.add_error('password_confirm', "As senhas não coincidem. Digite novamente.")
+        
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
 
 
 class UpdateUserForm(forms.ModelForm):
@@ -96,14 +93,29 @@ class UpdateUserForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
         
+    #  Validação de segurança: Evita roubar o username de outro usuário ativo
     def clean_username(self):
-
         username = self.cleaned_data.get('username')
-
+        
         if len(username) < 3:
-
-            raise ValidationError(
-                'O nome de usuário deve ter pelo menos 3 caracteres.'
-            )
-
+            raise ValidationError('O nome de usuário deve ter pelo menos 3 caracteres.')
+            
+        # Verifica se o username já existe em OUTRO usuário (ignorando o atual)
+        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise ValidationError('Este nome de usuário já está em uso.')
+            
         return username
+
+    # Validação de e-mail na edição
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        invalid_domains = ['gamil.com', 'gmial.com', 'hotmial.com', 'yaho.com']
+        domain = email.split('@')[-1]
+
+        if domain in invalid_domains:
+            raise ValidationError('Digite um email válido.')
+
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise ValidationError('Este email já está cadastrado por outro usuário.')
+
+        return email
