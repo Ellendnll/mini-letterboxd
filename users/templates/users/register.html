@@ -35,15 +35,27 @@
 
                     <div class="mb-3">
                         <label class="form-label">Senha</label>
-                        {{ form.password }}
+                        <div class="input-group">
+                            {{ form.password }}
+                            <button class="btn btn-outline-secondary" type="button" 
+                                onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'; this.querySelector('i').classList.toggle('bi-eye'); this.querySelector('i').classList.toggle('bi-eye-slash');">
+                              <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         {% for error in form.password.errors %}
                             <div class="text-danger small mt-1">✕ {{ error }}</div>
                         {% endfor %}
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Confirmar senha</label>
-                        {{ form.password_confirm }}
+                        <label class="form-label">Confirmar Senha</label>
+                        <div class="input-group">
+                            {{ form.password_confirm }}
+                            <button class="btn btn-outline-secondary" type="button" 
+                                onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'; this.querySelector('i').classList.toggle('bi-eye'); this.querySelector('i').classList.toggle('bi-eye-slash');">
+                             <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         {% for error in form.password_confirm.errors %}
                             <div class="text-danger small mt-1">✕ {{ error }}</div>
                         {% endfor %}

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from .models import Profile
 
 class RegisterForm(forms.ModelForm):
 
@@ -20,9 +21,10 @@ class RegisterForm(forms.ModelForm):
 
     password = forms.CharField(
         label="Senha",
-        widget=forms.PasswordInput(attrs={
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Digite sua senha'
+            'placeholder': 'Digite sua senha',
+            'type': 'password' # Garante que comece como bolinhas
         })
     )
 
@@ -30,7 +32,8 @@ class RegisterForm(forms.ModelForm):
         label="Confirmar senha",
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Confirme sua senha'
+            'placeholder': 'Confirme sua senha',
+            # Deixamos esse aqui padrão para você ver a diferença
         })
     )
 
@@ -119,3 +122,19 @@ class UpdateUserForm(forms.ModelForm):
             raise ValidationError('Este email já está cadastrado por outro usuário.')
 
         return email
+    
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'location']
+        widgets = {
+            'bio': forms.Textarea(attrs={
+                'rows': 3, 
+                'placeholder': 'Conte um pouco sobre você e seus gostos cinematográficos...',
+                'class': 'form-control' # Deixa pronto para o Integrante 4 estilizar com Bootstrap
+            }),
+            'location': forms.TextInput(attrs={
+                'placeholder': 'Ex: São Paulo, Brasil',
+                'class': 'form-control'
+            }),
+        }

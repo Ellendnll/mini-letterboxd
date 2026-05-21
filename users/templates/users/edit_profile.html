@@ -10,7 +10,7 @@
                 <form method="POST">
                     {% csrf_token %}
 
-                    {% if form.errors %}
+                    {% if user_form.errors or profile_form.errors %}
                         <div class="alert alert-danger">
                             Por favor, corrija os erros abaixo.
                         </div>
@@ -18,21 +18,39 @@
 
                     <div class="mb-3">
                         <label class="form-label">Usuário</label>
-                        {{ form.username }}
-                        {% for error in form.username.errors %}
+                        {{ user_form.username }}
+                        {% for error in user_form.username.errors %}
                             <div class="text-danger small mt-1">✕ {{ error }}</div>
                         {% endfor %}
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        {{ form.email }}
-                        {% for error in form.email.errors %}
+                        {{ user_form.email }}
+                        {% for error in user_form.email.errors %}
                             <div class="text-danger small mt-1">✕ {{ error }}</div>
                         {% endfor %}
                     </div>
 
-                    <div class="d-flex gap-2">
+                    <hr class="text-muted my-4">
+
+                    <div class="mb-3">
+                        <label class="form-label">Localização</label>
+                        {{ profile_form.location }}
+                        {% for error in profile_form.location.errors %}
+                            <div class="text-danger small mt-1">✕ {{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Biografia (Descrição)</label>
+                        {{ profile_form.bio }}
+                        {% for error in profile_form.bio.errors %}
+                            <div class="text-danger small mt-1">✕ {{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
                         <a href="{% url 'profile' %}" class="btn btn-outline-secondary w-50">Cancelar</a>
                         <button type="submit" class="btn btn-dark w-50">
                             Salvar Alterações
