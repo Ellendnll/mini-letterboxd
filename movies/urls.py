@@ -1,8 +1,13 @@
 from django.urls import path
-# Se houver alguma view criada por ele, o import ficaria aqui, por exemplo:
-# from . import views
+from . import views
 
-# Essa lista DEVE existir para o Django não dar erro
+# Define o nome do aplicativo para organização das URLs do Django
+app_name = 'movies'
+
 urlpatterns = [
-    # O integrante de filmes colocará as rotas dele aqui dentro depois
+    # Rota para a página de busca: /movies/
+    path('', views.movie_search, name='movie_search'),
+    
+    # Rota para os detalhes do filme (recebe o ID do TMDB na URL): /movies/123/
+    path('<int:movie_id>/', views.movie_detail, name='movie_detail'),
 ]
