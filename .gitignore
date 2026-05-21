@@ -1,0 +1,7 @@
+# Ambiente Virtual (Obrigatório)
+venv/
+.venv/
+
+# Arquivos temporários do Python (Bom deixar para o histórico do Git ficar limpo)
+__pycache__/
+*.pyc
