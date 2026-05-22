@@ -24,7 +24,7 @@ class RegisterForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Digite sua senha',
-            'type': 'password' # Garante que comece como bolinhas
+            'type': 'password'  Garante que comece como bolinhas
         })
     )
 
@@ -33,7 +33,7 @@ class RegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Confirme sua senha',
-            # Deixamos esse aqui padrão para você ver a diferença
+             Deixamos esse aqui padrão para você ver a diferença
         })
     )
 
@@ -96,20 +96,20 @@ class UpdateUserForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
         
-    #  Validação de segurança: Evita roubar o username de outro usuário ativo
+      Validação de segurança: Evita roubar o username de outro usuário ativo
     def clean_username(self):
         username = self.cleaned_data.get('username')
         
         if len(username) < 3:
             raise ValidationError('O nome de usuário deve ter pelo menos 3 caracteres.')
             
-        # Verifica se o username já existe em OUTRO usuário (ignorando o atual)
+         Verifica se o username já existe em OUTRO usuário (ignorando o atual)
         if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
             raise ValidationError('Este nome de usuário já está em uso.')
             
         return username
 
-    # Validação de e-mail na edição
+     Validação de e-mail na edição
     def clean_email(self):
         email = self.cleaned_data.get('email')
         invalid_domains = ['gamil.com', 'gmial.com', 'hotmial.com', 'yaho.com']
@@ -131,7 +131,7 @@ class ProfileUpdateForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={
                 'rows': 3, 
                 'placeholder': 'Conte um pouco sobre você e seus gostos cinematográficos...',
-                'class': 'form-control' # Deixa pronto para o Integrante 4 estilizar com Bootstrap
+                'class': 'form-control'  Deixa pronto para o Integrante 4 estilizar com Bootstrap
             }),
             'location': forms.TextInput(attrs={
                 'placeholder': 'Ex: São Paulo, Brasil',

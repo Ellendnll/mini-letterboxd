@@ -29,7 +29,7 @@ def detail(request, tmdb_id):
     movie = get_object_or_404(Movie, tmdb_id=tmdb_id)
     reviews = Review.objects.filter(movie=movie).select_related('user')
     
-    # Para mostrar a nota do usuário atual
+     Para mostrar a nota do usuário atual
     user_rating = None
     is_favorited = False
     
