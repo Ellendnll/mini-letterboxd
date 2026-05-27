@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a href="{% url 'user_profile' target_user.username %}" class="btn btn-outline-light btn-sm fw-bold">← Voltar ao Perfil</a>
+                <h3 class="text-white mb-0">{{ title }}</h3>
+            </div>
+            
+            <div class="list-group">
+                {% for profile in connections %}
+                    <div class="list-group-item border-0 mb-2 p-3 rounded d-flex justify-content-between align-items-center text-white" style="background-color: #1c252d;">
+                        <div class="d-flex align-items-center gap-3">
+                            <img
+                                src="https://ui-avatars.com/api/?name={{ profile.user.username }}&background=212529&color=fff&size=48"
+                                class="rounded-circle border border-secondary"
+                                alt="Avatar"
+                            >
+                            <div>
+                                <h5 class="mb-0 fw-bold">
+                                    {{ profile.user.username }}
+                                    {% if profile.is_private %}
+                                        <small class="text-muted" style="font-size: 14px;">🔒</small>
+                                    {% endif %}
+                                </h5>
+                                <small class="text-white-50">Membro desde {{ profile.user.date_joined|date:"d/m/Y" }}</small>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <a href="{% url 'user_profile' profile.user.username %}" class="btn btn-sm btn-success fw-bold text-white px-3">
+                                Ver Perfil
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center p-5 rounded" style="background-color: #1c252d;">
+                        <span class="fs-2">👥</span>
+                        <h5 class="text-white mt-2">Ninguém por aqui ainda.</h5>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

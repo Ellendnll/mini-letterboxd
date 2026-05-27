@@ -4,158 +4,208 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-4 mb-4">
-            <div class="card shadow border-0">
+            <div class="card shadow border-0 text-white" style="background-color: #1c252d;">
                 <div class="card-body p-4 text-center">
                     <img
                         src="https://ui-avatars.com/api/?name={{ username }}&background=212529&color=fff&size=128"
-                        class="rounded-circle mb-3"
+                        class="rounded-circle mb-3 border border-secondary"
                         alt="Avatar"
                     >
-                    <h2>{{ username }}</h2>
-                    <p class="text-muted">
+                    <h2 class="text-white">
+                        {{ username }}
+                        {% if is_private %}
+                            <small class="text-muted" style="font-size: 16px;">🔒︎</small>
+                        {% endif %}
+                    </h2>
+                    <p class="text-white-50 small">
                         Membro desde {{ date_joined|date:"d/m/Y" }}
                     </p>
 
+                    <div class="row my-3 text-center bg-dark p-2 rounded">
+                        <div class="col-6 border-end border-secondary">
+                            {% if is_locked %}
+                                <span class="fw-bold text-white d-block fs-5">{{ followers_count }}</span>
+                                <small class="text-white-50 text-uppercase" style="font-size: 10px;">Seguidores</small>
+                            {% else %}
+                                <a href="{% url 'user_followers' username %}" class="text-decoration-none d-block">
+                                    <span class="fw-bold text-white d-block fs-5">{{ followers_count }}</span>
+                                    <small class="text-white-50 text-uppercase" style="font-size: 10px;">Seguidores</small>
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            {% if is_locked %}
+                                <span class="fw-bold text-white d-block fs-5">{{ following_count }}</span>
+                                <small class="text-white-50 text-uppercase" style="font-size: 10px;">Seguindo</small>
+                            {% else %}
+                                <a href="{% url 'user_following' username %}" class="text-decoration-none d-block">
+                                    <span class="fw-bold text-white d-block fs-5">{{ following_count }}</span>
+                                    <small class="text-white-50 text-uppercase" style="font-size: 10px;">Seguindo</small>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
                     {% if location %}
-                        <p class="text-muted small">
-                            📍 {{ location }}
+                        <p class="text-white-50 small">
+                            ⟟ {{ location }}
                         </p>
                     {% endif %}
 
-                    <div class="my-4 bg-light p-3 rounded text-start">
-                        <h6 class="text-uppercase fw-bold text-muted small mb-2">Sobre Me</h6>
+                    <div class="my-3 bg-dark p-3 rounded text-start">
+                        <h6 class="text-uppercase fw-bold text-white-50 small mb-2">Sobre Mim</h6>
                         {% if bio %}
-                            <p class="mb-0 text-secondary small">{{ bio }}</p>
+                            <p class="mb-0 text-white small">{{ bio }}</p>
                         {% else %}
-                            <p class="mb-0 text-muted small"><em>Nenhuma descrição informada ainda.</em></p>
+                            <p class="mb-0 text-white-50 small"><em>Nenhuma descrição informada ainda.</em></p>
                         {% endif %}
                     </div>
 
-                    <hr>
-
-                    <div class="text-start mb-4 small">
-                        <p><strong>Email:</strong> {{ email }}</p>
-                    </div>
+                    <hr class="border-secondary">
 
                     <div class="d-grid gap-2">
-                        <a href="{% url 'edit_profile' %}" class="btn btn-dark btn-sm">
-                            Editar Perfil
-                        </a>
-                        <a href="{% url 'change_password' %}" class="btn btn-outline-dark btn-sm">
-                            Alterar Senha
-                        </a>
+                        {% if is_own_profile %}
+                            <a href="{% url 'edit_profile' %}" class="btn btn-success btn-sm fw-bold text-white">
+                                Editar Perfil
+                            </a>
+                            <a href="{% url 'change_password' %}" class="btn btn-outline-light btn-sm text-white-50">
+                                Alterar Senha
+                            </a>
+                        {% else %}
+                            {% if is_following %}
+                                <a href="{% url 'follow_toggle' username %}" class="btn btn-secondary btn-sm fw-bold text-white">
+                                    Deixar de Seguir
+                                </a>
+                            {% else %}
+                                <a href="{% url 'follow_toggle' username %}" class="btn btn-success btn-sm fw-bold text-white">
+                                    ➕ Seguir
+                                </a>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-8">
-            <div class="card shadow border-0 mb-4 bg-dark text-white">
-                <div class="card-body p-4">
-                    <h5 class="text-muted text-uppercase small mb-3 fw-bold"> O Seu Resumo Cinéfilo</h5>
-                    <div class="row text-center">
-                        <div class="col-4 border-end border-secondary">
-                            <span class="fs-2 fw-bold text-success">{{ user_favorites.count }}</span>
-                            <p class="text-muted small mb-0">Favoritos</p>
-                        </div>
-                        <div class="col-4 border-end border-secondary">
-                            <span class="fs-2 fw-bold text-warning">{{ user_reviews.count }}</span>
-                            <p class="text-muted small mb-0">Avaliações</p>
-                        </div>
-                        <div class="col-4">
-                            <span class="fs-2 fw-bold text-info">{{ user_watchlist.count }}</span>
-                            <p class="text-muted small mb-0">Quero Ver</p>
+            {% if is_locked %}
+                <div class="card shadow border-0 text-center p-5 text-white" style="background-color: #1c252d; min-height: 300px; display: flex; justify-content: center; align-items: center;">
+                    <div class="p-4">
+                        <span class="display-1 d-block mb-3">🔒︎</span>
+                        <h4 class="fw-bold text-white">Esta conta é Privada</h4>
+                        <p class="text-white-50">Siga @{{ username }} para ver suas avaliações, filmes favoritos e listas de reprodução.</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card shadow border-0 mb-4 bg-dark text-white">
+                    <div class="card-body p-4">
+                        <h5 class="text-white-50 text-uppercase small mb-3 fw-bold">Resumo Cinéfilo</h5>
+                        <div class="row text-center">
+                            <div class="col-4 border-end border-secondary">
+                                <span class="fs-2 fw-bold text-success">{{ user_favorites.count }}</span>
+                                <p class="text-white-50 small mb-0">Favoritos</p>
+                            </div>
+                            <div class="col-4 border-end border-secondary">
+                                <span class="fs-2 fw-bold text-warning">{{ user_reviews.count }}</span>
+                                <p class="text-white-50 small mb-0">Avaliações</p>
+                            </div>
+                            <div class="col-4">
+                                <span class="fs-2 fw-bold text-info">{{ user_watchlist.count }}</span>
+                                <p class="text-white-50 small mb-0">Quero Ver</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card shadow border-0 mb-4">
-                <div class="card-body p-4">
-                    <h4 class="mb-3"> Meus Favoritos</h4>
-                    <div class="row">
-                        {% for favorite in user_favorites %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card h-100 bg-light border-0">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0 text-truncate" style="max-width: 70%;">{{ favorite.movie.title }}</h6>
-                                        <a href="/movies/{{ favorite.movie.tmdb_id }}/" class="btn btn-sm btn-dark">Ver</a>
+                <div class="card shadow border-0 mb-4 text-white" style="background-color: #1c252d;">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3 text-white">Meus Favoritos</h4>
+                        <div class="row">
+                            {% for favorite in user_favorites %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 border-0" style="background-color: #24303c;">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 text-truncate text-white" style="max-width: 70%;">{{ favorite.movie.title }}</h6>
+                                            <a href="/movies/{{ favorite.movie.tmdb_id }}/" class="btn btn-sm btn-light fw-bold">Ver</a>
+                                        </div>
                                     </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-white-50 small ps-2">Nenhum filme favorito listado.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow border-0 mb-4 text-white" style="background-color: #1c252d;">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3 text-white">Lista de Desejos (Quero Ver)</h4>
+                        <div class="row">
+                            {% for item in user_watchlist %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 border-0" style="background-color: #24303c;">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 text-truncate text-white" style="max-width: 70%;">{{ item.movie.title }}</h6>
+                                            <a href="/movies/{{ item.movie.tmdb_id }}/" class="btn btn-sm btn-light fw-bold">Ver</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-white-50 small ps-2">A lista de assistir está vazia.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow border-0 text-white" style="background-color: #1c252d;">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3 text-white">Avaliações Realizadas</h4>
+                        {% for review in user_reviews %}
+                            <div class="card mb-3 border-0" style="background-color: #24303c;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="text-white">{{ review.movie.title }}</h5>
+                                        <span class="badge bg-warning text-dark fw-bold">⭐ {{ review.rating }}/5</span>
+                                    </div>
+                                    <p class="text-white small mt-2 mb-2" style="opacity: 0.95;">"{{ review.comment }}"</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-white-50 text-uppercase" style="font-size: 10px;">{{ review.created_at|date:"d/m/Y" }}</small>
+                                        
+                                        {% if is_own_profile %}
+                                        <div>
+                                            <button class="btn btn-sm btn-link text-warning p-0 text-decoration-none me-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#edit-review-{{ review.id }}">Editar</button>
+                                            <a href="{% url 'interactions:delete_review' review.id %}" class="btn btn-sm btn-link text-danger p-0 text-decoration-none fw-bold">Excluir</a>
+                                        </div>
+                                        {% endif %} </div>
+
+                                    {% if is_own_profile %}
+                                    <div class="collapse mt-3 border-top border-secondary pt-3" id="edit-review-{{ review.id }}">
+                                        <form action="/interactions/review/{{ review.movie.tmdb_id }}/" method="POST">
+                                            {% csrf_token %}
+                                            <div class="row g-2">
+                                                <div class="col-sm-2">
+                                                    <label class="form-label small fw-bold text-white-50">Nota:</label>
+                                                    <input type="number" name="rating" min="1" max="5" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{ review.rating }}" required>
+                                                </div>
+                                                <div class="col-sm-10">
+                                                    <label class="form-label small fw-bold text-white-50">Review:</label>
+                                                    <textarea name="comment" class="form-control form-control-sm bg-dark text-white border-secondary" rows="2" required>{{ review.comment }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="text-end mt-2">
+                                                <button type="submit" class="btn btn-success btn-sm px-3 fw-bold text-white">Salvar Alterações</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% empty %}
-                            <p class="text-muted small ps-2">Você ainda não tem filmes favoritos.</p>
+                            <p class="text-white-50 small ps-2">Nenhuma avaliação encontrada.</p>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-
-            <div class="card shadow border-0 mb-4">
-                <div class="card-body p-4">
-                    <h4 class="mb-3"> Minha Lista (Quero Assistir)</h4>
-                    <div class="row">
-                        {% for item in user_watchlist %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card h-100 bg-light border-0">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0 text-truncate" style="max-width: 70%;">{{ item.movie.title }}</h6>
-                                        <a href="/movies/{{ item.movie.tmdb_id }}/" class="btn btn-sm btn-dark">Ver</a>
-                                    </div>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <p class="text-muted small ps-2">Sua lista está vazia. Adicione filmes que deseja assistir!</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow border-0">
-                <div class="card-body p-4">
-                    <h4 class="mb-3"> Minhas Avaliações</h4>
-                    {% for review in user_reviews %}
-                        <div class="card mb-3 bg-light border-0">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h5>{{ review.movie.title }}</h5>
-                                    <span class="badge bg-warning text-dark">⭐ {{ review.rating }}/5</span>
-                                </div>
-                                <p class="text-secondary small mt-2 mb-2">"{{ review.comment }}"</p>
-                                
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted text-uppercase" style="font-size: 10px;">{{ review.created_at|date:"d/m/Y" }}</small>
-                                    <div>
-                                        <button class="btn btn-sm btn-link text-warning p-0 text-decoration-none me-3" type="button" data-bs-toggle="collapse" data-bs-target="#edit-review-{{ review.id }}">Editar</button>
-                                        <a href="{% url 'interactions:delete_review' review.id %}" class="btn btn-sm btn-link text-danger p-0 text-decoration-none">Excluir</a>
-                                    </div>
-                                </div>
-
-                                <div class="collapse mt-3 border-top border-secondary-50 pt-3" id="edit-review-{{ review.id }}">
-                                    <form action="/interactions/review/{{ review.movie.tmdb_id }}/" method="POST">
-                                        {% csrf_token %}
-                                        <div class="row g-2">
-                                            <div class="col-sm-2">
-                                                <label class="form-label small fw-bold text-dark">Nota:</label>
-                                                <input type="number" name="rating" min="1" max="5" class="form-control form-control-sm bg-white text-dark border-secondary" value="{{ review.rating }}" required>
-                                            </div>
-                                            <div class="col-sm-10">
-                                                <label class="form-label small fw-bold text-dark">Review:</label>
-                                                <textarea name="comment" class="form-control form-control-sm bg-white text-dark border-secondary" rows="2" required>{{ review.comment }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="text-end mt-2">
-                                            <button type="submit" class="btn btn-success btn-sm px-3">Salvar Alterações</button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    {% empty %}
-                        <p class="text-muted small ps-2">Você ainda não fez avaliações.</p>
-                    {% endfor %}
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -43,7 +43,7 @@ class RegisterForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         
-        # Proteção: Se o email for None ou vazio, o Django já trata no validador padrão dele
+       
         if not email:
             return email
             
@@ -61,7 +61,7 @@ class RegisterForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
         
-        # Proteção: Garante que 'username' não é None antes de passar no len()
+        
         if not username:
             return username
             
@@ -141,7 +141,7 @@ class UpdateUserForm(forms.ModelForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'location']
+        fields = ['bio', 'location','is_private']
         widgets = {
             'bio': forms.Textarea(attrs={
                 'rows': 3, 
@@ -152,4 +152,5 @@ class ProfileUpdateForm(forms.ModelForm):
                 'placeholder': 'Ex: São Paulo, Brasil',
                 'class': 'form-control'
             }),
+            'is_private': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
