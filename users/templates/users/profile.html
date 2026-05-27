@@ -9,6 +9,7 @@
                     <img
                         src="https://ui-avatars.com/api/?name={{ username }}&background=212529&color=fff&size=128"
                         class="rounded-circle mb-3"
+                        alt="Avatar"
                     >
                     <h2>{{ username }}</h2>
                     <p class="text-muted">
@@ -22,7 +23,7 @@
                     {% endif %}
 
                     <div class="my-4 bg-light p-3 rounded text-start">
-                        <h6 class="text-uppercase fw-bold text-muted small mb-2">Sobre Mim</h6>
+                        <h6 class="text-uppercase fw-bold text-muted small mb-2">Sobre Me</h6>
                         {% if bio %}
                             <p class="mb-0 text-secondary small">{{ bio }}</p>
                         {% else %}
@@ -49,6 +50,26 @@
         </div>
 
         <div class="col-md-8">
+            <div class="card shadow border-0 mb-4 bg-dark text-white">
+                <div class="card-body p-4">
+                    <h5 class="text-muted text-uppercase small mb-3 fw-bold"> O Seu Resumo Cinéfilo</h5>
+                    <div class="row text-center">
+                        <div class="col-4 border-end border-secondary">
+                            <span class="fs-2 fw-bold text-success">{{ user_favorites.count }}</span>
+                            <p class="text-muted small mb-0">Favoritos</p>
+                        </div>
+                        <div class="col-4 border-end border-secondary">
+                            <span class="fs-2 fw-bold text-warning">{{ user_reviews.count }}</span>
+                            <p class="text-muted small mb-0">Avaliações</p>
+                        </div>
+                        <div class="col-4">
+                            <span class="fs-2 fw-bold text-info">{{ user_watchlist.count }}</span>
+                            <p class="text-muted small mb-0">Quero Ver</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card shadow border-0 mb-4">
                 <div class="card-body p-4">
                     <h4 class="mb-3"> Meus Favoritos</h4>
@@ -58,12 +79,32 @@
                                 <div class="card h-100 bg-light border-0">
                                     <div class="card-body d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0 text-truncate" style="max-width: 70%;">{{ favorite.movie.title }}</h6>
-                                        <a href="{% url 'movies:detail' favorite.movie.tmdb_id %}" class="btn btn-sm btn-dark">Ver</a>
+                                        <a href="/movies/{{ favorite.movie.tmdb_id }}/" class="btn btn-sm btn-dark">Ver</a>
                                     </div>
                                 </div>
                             </div>
                         {% empty %}
-                            <p class="text-muted small">Você ainda não tem filmes favoritos.</p>
+                            <p class="text-muted small ps-2">Você ainda não tem filmes favoritos.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow border-0 mb-4">
+                <div class="card-body p-4">
+                    <h4 class="mb-3"> Minha Lista (Quero Assistir)</h4>
+                    <div class="row">
+                        {% for item in user_watchlist %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 bg-light border-0">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 text-truncate" style="max-width: 70%;">{{ item.movie.title }}</h6>
+                                        <a href="/movies/{{ item.movie.tmdb_id }}/" class="btn btn-sm btn-dark">Ver</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted small ps-2">Sua lista está vazia. Adicione filmes que deseja assistir!</p>
                         {% endfor %}
                     </div>
                 </div>
@@ -79,20 +120,43 @@
                                     <h5>{{ review.movie.title }}</h5>
                                     <span class="badge bg-warning text-dark">⭐ {{ review.rating }}/5</span>
                                 </div>
-                                <p class="text-secondary small mt-2 mb-2">{{ review.comment }}</p>
+                                <p class="text-secondary small mt-2 mb-2">"{{ review.comment }}"</p>
+                                
                                 <div class="d-flex justify-content-between align-items-center">
                                     <small class="text-muted text-uppercase" style="font-size: 10px;">{{ review.created_at|date:"d/m/Y" }}</small>
-                                    <a href="{% url 'interactions:delete_review' review.id %}" class="btn btn-sm btn-link text-danger p-0 text-decoration-none">Excluir</a>
+                                    <div>
+                                        <button class="btn btn-sm btn-link text-warning p-0 text-decoration-none me-3" type="button" data-bs-toggle="collapse" data-bs-target="#edit-review-{{ review.id }}">Editar</button>
+                                        <a href="{% url 'interactions:delete_review' review.id %}" class="btn btn-sm btn-link text-danger p-0 text-decoration-none">Excluir</a>
+                                    </div>
                                 </div>
+
+                                <div class="collapse mt-3 border-top border-secondary-50 pt-3" id="edit-review-{{ review.id }}">
+                                    <form action="/interactions/review/{{ review.movie.tmdb_id }}/" method="POST">
+                                        {% csrf_token %}
+                                        <div class="row g-2">
+                                            <div class="col-sm-2">
+                                                <label class="form-label small fw-bold text-dark">Nota:</label>
+                                                <input type="number" name="rating" min="1" max="5" class="form-control form-control-sm bg-white text-dark border-secondary" value="{{ review.rating }}" required>
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <label class="form-label small fw-bold text-dark">Review:</label>
+                                                <textarea name="comment" class="form-control form-control-sm bg-white text-dark border-secondary" rows="2" required>{{ review.comment }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="text-end mt-2">
+                                            <button type="submit" class="btn btn-success btn-sm px-3">Salvar Alterações</button>
+                                        </div>
+                                    </form>
+                                </div>
+
                             </div>
                         </div>
                     {% empty %}
-                        <p class="text-muted small">Você ainda não fez avaliações.</p>
+                        <p class="text-muted small ps-2">Você ainda não fez avaliações.</p>
                     {% endfor %}
                 </div>
             </div>
         </div>
-        
     </div>
 </div>
 {% endblock %}
