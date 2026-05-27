@@ -2,13 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-
-
 from .forms import RegisterForm, UpdateUserForm, ProfileUpdateForm
 from .models import Profile
-
-
-from interactions.models import Review, Favorite
+from interactions.models import Review, Favorite, Watchlist
 
 def home_view(request):
     return render(request, 'users/home.html')
@@ -29,12 +25,13 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    
     profile, created = Profile.objects.get_or_create(user=request.user)
-    
     
     user_reviews = Review.objects.filter(user=request.user).select_related('movie')
     user_favorites = Favorite.objects.filter(user=request.user).select_related('movie')
+    
+    # 🍿 BUSCANDO OS FILMES DA WATCHLIST NO BANCO DE DADOS:
+    user_watchlist = Watchlist.objects.filter(user=request.user).select_related('movie')
     
     context = {
         'username': request.user.username,
@@ -43,9 +40,10 @@ def profile_view(request):
         'location': profile.location,
         'date_joined': request.user.date_joined,
         
-        
         'user_reviews': user_reviews,
         'user_favorites': user_favorites,
+        # 🍿 ENVIANDO A VARIÁVEL PARA O HTML:
+        'user_watchlist': user_watchlist,
     }
     return render(request, 'users/profile.html', context)
 
@@ -85,7 +83,6 @@ def login_view(request):
             remember_me = request.POST.get('remember_me')
             if not remember_me:
                 request.session.set_expiry(0)
-            
             
             return redirect('/movies/') 
         else:

@@ -24,7 +24,7 @@ class RegisterForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Digite sua senha',
-            'type': 'password'  Garante que comece como bolinhas
+            'type': 'password' 
         })
     )
 
@@ -33,7 +33,6 @@ class RegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Confirme sua senha',
-             Deixamos esse aqui padrão para você ver a diferença
         })
     )
 
@@ -43,6 +42,11 @@ class RegisterForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        
+        # Proteção: Se o email for None ou vazio, o Django já trata no validador padrão dele
+        if not email:
+            return email
+            
         invalid_domains = ['gamil.com', 'gmial.com', 'hotmial.com', 'yaho.com']
         domain = email.split('@')[-1]
 
@@ -56,6 +60,11 @@ class RegisterForm(forms.ModelForm):
     
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        
+        # Proteção: Garante que 'username' não é None antes de passar no len()
+        if not username:
+            return username
+            
         if len(username) < 3:
              raise ValidationError('O nome de usuário deve ter pelo menos 3 caracteres.')
         return username
@@ -96,22 +105,28 @@ class UpdateUserForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
         
-      Validação de segurança: Evita roubar o username de outro usuário ativo
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        
+        # Proteção contra None
+        if not username:
+            return username
         
         if len(username) < 3:
             raise ValidationError('O nome de usuário deve ter pelo menos 3 caracteres.')
             
-         Verifica se o username já existe em OUTRO usuário (ignorando o atual)
         if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
             raise ValidationError('Este nome de usuário já está em uso.')
             
         return username
 
-     Validação de e-mail na edição
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        
+        # Proteção contra None
+        if not email:
+            return email
+            
         invalid_domains = ['gamil.com', 'gmial.com', 'hotmial.com', 'yaho.com']
         domain = email.split('@')[-1]
 
@@ -131,7 +146,7 @@ class ProfileUpdateForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={
                 'rows': 3, 
                 'placeholder': 'Conte um pouco sobre você e seus gostos cinematográficos...',
-                'class': 'form-control'  Deixa pronto para o Integrante 4 estilizar com Bootstrap
+                'class': 'form-control' 
             }),
             'location': forms.TextInput(attrs={
                 'placeholder': 'Ex: São Paulo, Brasil',

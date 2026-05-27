@@ -26,3 +26,15 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.user.username} favoritou {self.movie.title}'
+
+# NOVO MODELO: QUERO ASSISTIR (WATCHLIST)
+class Watchlist(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='watchlist')
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='watchlist_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'movie']
+
+    def __str__(self):
+        return f'{self.user.username} quer assistir {self.movie.title}'
