@@ -9,20 +9,28 @@
         .card-title { color: #fff; }
         .btn-custom { background-color: #00c030; color: #fff; }
         .btn-custom:hover { background-color: #00b02a; color: #fff; }
+        .text-info { color:white !important; }
+        input::placeholder { color :white !important; }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center mb-5">
-            <div class="col-md-8 text-center">
-                <h1 class="text-white mb-4">Descubra novos filmes</h1>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="text-white mb-4"> ⌕ Pesquisar Filmes</h2>
                 
-                <form method="GET" action="{% url 'movies:movie_search' %}" class="d-flex gap-2">
-                    <input type="text" name="q" class="form-control form-control-lg bg-dark text-white border-secondary" 
-                           placeholder="Digite o nome de um filme... (ex: Batman)" value="{{ query }}">
-                    <button type="submit" class="btn btn-custom btn-lg px-4">Buscar</button>
-                </form>
+                <form method="GET" action="{% url 'movies:movie_search' %}" class="d-flex gap-2 mb-5">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control bg-dark text-white border-secondary" 
+                    placeholder="Digite o nome do filme..." 
+                    value="{{ query }}"
+                    required
+                >
+                <button type="submit" class="btn btn-success fw-bold text-white px-4">Buscar</button>
+            </form>
             </div>
         </div>
 

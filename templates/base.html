@@ -11,6 +11,7 @@
         .nav-link { color: #9ab !important; font-weight: 600; }
         .nav-link:hover, .nav-link.active { color: #fff !important; }
         .main-content { flex: 1; }
+        input::placeholder { color :white !important; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -18,7 +19,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
-            <a class="navbar-brand fw-bold text-success" href="/movies/">🟢 Mini-Letterboxd</a>
+            <a class="navbar-brand fw-bold text-success" href="/movies/">🟢 LetterBit</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -28,18 +29,18 @@
                         <a class="nav-link" href="/movies/">🎞️ Buscar Filmes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_search' %}">⌕ Buscar Usuários</a>
+                        <a class="nav-link" href="{% url 'user_search' %}">👤 Buscar Usuários</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link fw-bold text-white" href="/profile/">👤 @{{ user.username }}</a>
+                            <a class="nav-link fw-bold text-white" href="/profile/"> @{{ user.username }}</a>
                         </li>
                         <li class="nav-item">
                             <form action="{% url 'logout' %}" method="POST" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="nav-link btn btn-link p-0 text-decoration-none" style="border: none;">Sair</button>
+                                <button type="submit" class="nav-link btn btn-link text-decoration-none" style="border: none;">Sair</button>
                             </form>
                         </li>
                     {% else %}

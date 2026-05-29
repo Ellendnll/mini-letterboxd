@@ -147,7 +147,7 @@
 
                         {% else %}
                             <div class="text-center py-2">
-                                <p class="text-muted m-0">🔒 <a href="/users/login/" class="text-success fw-bold text-decoration-none">Faça login</a> para favoritar ou deixar uma avaliação neste filme.</p>
+                                <p class="text-muted m-0">🔒 <a href="{% url 'login' %}" class="text-success fw-bold text-decoration-none">Faça login</a> para favoritar ou deixar uma avaliação neste filme.</p>
                             </div>
                         {% endif %}
 
